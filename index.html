@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#101821" />
+  <meta name="description" content="Lokaler Nessus-HTML-Bericht-Parser: Domains mit Critical- und High-Funden erkennen." />
+  <title>Nessus Report Lens</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <a class="brand" href="#top" aria-label="Nessus Report Lens Startseite"><span class="brand-mark">N</span><span>SECURITY TOOLKIT <i>/ REPORT LENS</i></span></a>
+        <p class="eyebrow">Lokale Berichtsanalyse</p>
+        <h1>Nessus Report <span>Lens</span></h1>
+        <p class="subtitle">Erkenne auf einen Blick, für welche Domains Critical- oder High-Schwachstellen gemeldet wurden.</p>
+      </div>
+      <div class="privacy-pill"><span class="privacy-dot"></span> Verarbeitung nur in deinem Browser</div>
+    </header>
+
+    <section id="drop-zone" class="drop-zone" tabindex="0" role="button" aria-label="Nessus-HTML-Bericht auswählen oder hier ablegen">
+      <input id="file-input" type="file" accept=".html,.htm,text/html" hidden />
+      <div class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v5h14v-5" /></svg></div>
+      <div class="drop-copy">
+        <h2>Bericht hier ablegen</h2>
+        <p>oder <button id="browse-button" class="text-link" type="button">HTML-Datei auswählen</button></p>
+        <small>Nessus-HTML-Export · .html oder .htm · bis 50 MB</small>
+      </div>
+      <div class="drop-hint">⤓ <span>Drag &amp; Drop</span></div>
+    </section>
+
+    <div id="app-message" class="app-message" role="status" aria-live="polite" hidden></div>
+
+    <section id="dashboard" hidden>
+      <div class="report-bar">
+        <div class="report-file"><span class="file-icon">HTML</span><div><strong id="file-name">–</strong><small id="report-meta">–</small></div></div>
+        <button id="clear-report" class="quiet-button" type="button">Bericht entfernen <span aria-hidden="true">×</span></button>
+      </div>
+
+      <div class="stats-grid" aria-label="Berichtsübersicht">
+        <article class="stat-card"><span class="stat-label">Domains geprüft</span><div><strong id="stat-hosts">0</strong><span class="stat-icon icon-hosts">◎</span></div><small>Hosts im Bericht</small></article>
+        <article class="stat-card critical-card"><span class="stat-label">Critical</span><div><strong id="stat-critical">0</strong><span class="stat-icon icon-critical">!</span></div><small id="stat-critical-hosts">0 betroffene Domains</small></article>
+        <article class="stat-card high-card"><span class="stat-label">High</span><div><strong id="stat-high">0</strong><span class="stat-icon icon-high">↑</span></div><small id="stat-high-hosts">0 betroffene Domains</small></article>
+        <article class="stat-card"><span class="stat-label">Critical / High</span><div><strong id="stat-affected">0</strong><span class="stat-icon icon-affected">⌁</span></div><small>Domains mit Handlungsbedarf</small></article>
+      </div>
+
+      <section class="results-panel" aria-labelledby="results-title">
+        <div class="panel-heading">
+          <div><p class="eyebrow">Finding-Übersicht</p><h2 id="results-title">Domains im Bericht</h2></div>
+          <span id="result-count" class="result-count">0 Domains</span>
+        </div>
+        <div class="toolbar">
+          <label class="search-box"><span aria-hidden="true">⌕</span><input id="search-input" type="search" placeholder="Domain, DNS-Name oder IP suchen …" autocomplete="off" /></label>
+          <label class="filter-toggle"><input id="issues-only" type="checkbox" /><span class="toggle-track"></span><span>Nur Critical / High</span></label>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Domain / Host</th><th scope="col">IP-Adresse</th><th scope="col" class="severity-column">Critical</th><th scope="col" class="severity-column">High</th><th scope="col">Status</th><th scope="col"><span class="sr-only">Details</span></th></tr></thead>
+            <tbody id="results-body"></tbody>
+          </table>
+          <div id="empty-results" class="empty-results" hidden><span>⌕</span><strong>Keine passenden Domains</strong><small>Filter anpassen oder Suchbegriff prüfen.</small></div>
+        </div>
+        <p class="table-footnote"><span class="footnote-dot"></span> Gezählt werden Nessus-Findings der Risikostufen Critical und High. Informative Plugins werden nicht als Schwachstellen gewertet.</p>
+      </section>
+    </section>
+
+    <footer><span>Nessus Report Lens <span class="footer-separator">·</span> Läuft vollständig lokal</span><span>Berichtsdaten verlassen diesen Browser nicht.</span></footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
