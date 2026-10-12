@@ -126,7 +126,7 @@ function getFindings(block) {
     const match = title.match(/^(\d+)\s*[-–:]\s*(.+)$/);
     const wrapper = node.nextElementSibling?.classList.contains("section-wrapper") ? node.nextElementSibling : null;
     const severity = severityFromElement(node, wrapper);
-    if (!severity || !["Critical", "High"].includes(severity)) continue;
+    if (!severity || !["Critical", "High", "Medium"].includes(severity)) continue;
     const key = `${match?.[1] || ""}:${title}:${severity}`;
     if (seen.has(key)) continue;
     seen.add(key);
@@ -149,12 +149,14 @@ function parseReport(html) {
     const findings = getFindings(block);
     const critical = counts?.Critical ?? findings.filter(finding => finding.severity === "Critical").length;
     const high = counts?.High ?? findings.filter(finding => finding.severity === "High").length;
+    const medium = counts?.Medium ?? findings.filter(finding => finding.severity === "Medium").length;
     return {
       name: block.name,
       dns: readDetailValue(block, "DNS Name"),
       ip: readDetailValue(block, "IP"),
       critical,
       high,
+      medium,
       findings,
     };
   });
@@ -187,11 +189,11 @@ function addCell(row, content, className = "") {
 function createFindingList(host) {
   const list = document.createElement("div");
   list.className = "finding-list";
-  const findings = host.findings.filter(finding => ["Critical", "High"].includes(finding.severity));
+  const findings = host.findings.filter(finding => ["Critical", "High", "Medium"].includes(finding.severity));
   if (!findings.length) {
     const note = document.createElement("p");
     note.className = "finding-note";
-    note.textContent = "Der Host-Zähler meldet Critical/High-Funde, aber die Plugin-Details konnten in diesem Export nicht ausgelesen werden.";
+    note.textContent = "Der Host-Zähler meldet Findings, aber die Plugin-Details konnten in diesem Export nicht ausgelesen werden.";
     list.append(note);
     return list;
   }
@@ -219,7 +221,7 @@ function createFindingList(host) {
 function renderResults() {
   const query = ui.searchInput.value.trim().toLocaleLowerCase("de-DE");
   const issuesOnly = ui.issuesOnly.checked;
-  const sorted = [...hosts].sort((a, b) => (b.critical - a.critical) || (b.high - a.high) || a.name.localeCompare(b.name, "de"));
+  const sorted = [...hosts].sort((a, b) => (b.critical - a.critical) || (b.high - a.high) || (b.medium - a.medium) || a.name.localeCompare(b.name, "de"));
   const visibleHosts = sorted.filter(host => {
     const matchesQuery = !query || [host.name, host.dns, host.ip].some(value => value.toLocaleLowerCase("de-DE").includes(query));
     return matchesQuery && (!issuesOnly || host.critical > 0 || host.high > 0);
@@ -257,10 +259,17 @@ function renderResults() {
     high.textContent = formatNumber(host.high);
     highCell.append(high);
 
+    const mediumCell = addCell(row, "", "severity-column");
+    const medium = document.createElement("span");
+    medium.className = `severity-count${host.medium ? " medium" : ""}`;
+    medium.textContent = formatNumber(host.medium);
+    mediumCell.append(medium);
+
     const hasIssues = host.critical > 0 || host.high > 0;
+    const hasMedium = host.medium > 0;
     const status = document.createElement("span");
-    status.className = `status-badge${hasIssues ? " attention" : ""}`;
-    status.textContent = hasIssues ? "Handlungsbedarf" : "Keine Critical / High";
+    status.className = `status-badge${hasIssues ? " attention" : hasMedium ? " medium-only" : ""}`;
+    status.textContent = hasIssues ? "Priorität: Critical / High" : hasMedium ? "Medium-Findings" : "Keine Critical / High / Medium";
     addCell(row, status);
 
     const detailCell = document.createElement("td");
@@ -282,7 +291,7 @@ function renderResults() {
       const detailRow = document.createElement("tr");
       detailRow.className = "detail-row";
       const detail = document.createElement("td");
-      detail.colSpan = 6;
+      detail.colSpan = 7;
       detail.append(createFindingList(host));
       detailRow.append(detail);
       ui.resultsBody.append(detailRow);
@@ -296,18 +305,22 @@ function renderResults() {
 function updateDashboard(file) {
   const criticalHosts = hosts.filter(host => host.critical > 0).length;
   const highHosts = hosts.filter(host => host.high > 0).length;
+  const mediumHosts = hosts.filter(host => host.medium > 0).length;
   const affectedHosts = hosts.filter(host => host.critical > 0 || host.high > 0).length;
   const criticalFindings = hosts.reduce((total, host) => total + host.critical, 0);
   const highFindings = hosts.reduce((total, host) => total + host.high, 0);
+  const mediumFindings = hosts.reduce((total, host) => total + host.medium, 0);
 
   ui.fileName.textContent = file.name;
   ui.reportMeta.textContent = `${formatNumber(hosts.length)} Hosts erkannt · ${formatFileSize(file.size)} · lokal analysiert`;
   document.getElementById("stat-hosts").textContent = formatNumber(hosts.length);
   document.getElementById("stat-critical").textContent = formatNumber(criticalFindings);
   document.getElementById("stat-high").textContent = formatNumber(highFindings);
+  document.getElementById("stat-medium").textContent = formatNumber(mediumFindings);
   document.getElementById("stat-affected").textContent = formatNumber(affectedHosts);
   document.getElementById("stat-critical-hosts").textContent = `${formatNumber(criticalHosts)} betroffene ${criticalHosts === 1 ? "Domain" : "Domains"}`;
   document.getElementById("stat-high-hosts").textContent = `${formatNumber(highHosts)} betroffene ${highHosts === 1 ? "Domain" : "Domains"}`;
+  document.getElementById("stat-medium-hosts").textContent = `${formatNumber(mediumHosts)} betroffene ${mediumHosts === 1 ? "Domain" : "Domains"}`;
   ui.dashboard.hidden = false;
   ui.searchInput.value = "";
   ui.issuesOnly.checked = false;

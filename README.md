@@ -1,6 +1,6 @@
 # Nessus Report Lens
 
-Ein lokales, statisches Lesezeichen-Hub-Modul zum Prüfen von Nessus-HTML-Berichten. Es listet die im Abschnitt **Vulnerabilities by Host** gefundenen Hosts/Domains auf und zeigt pro Eintrag Critical- und High-Zähler sowie die zugehörigen Plugin-Namen.
+Ein lokales, statisches Lesezeichen-Hub-Modul zum Prüfen von Nessus-HTML-Berichten. Es listet die im Abschnitt **Vulnerabilities by Host** gefundenen Hosts/Domains auf und zeigt pro Eintrag Critical-, High- und Medium-Zähler sowie die zugehörigen Plugin-Namen. Critical und High werden in der Sortierung und im Schnellfilter priorisiert; Medium bleibt in Übersicht und Details sichtbar.
 
 ## Verwendung
 

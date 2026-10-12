@@ -43,6 +43,7 @@
         <article class="stat-card"><span class="stat-label">Domains geprüft</span><div><strong id="stat-hosts">0</strong><span class="stat-icon icon-hosts">◎</span></div><small>Hosts im Bericht</small></article>
         <article class="stat-card critical-card"><span class="stat-label">Critical</span><div><strong id="stat-critical">0</strong><span class="stat-icon icon-critical">!</span></div><small id="stat-critical-hosts">0 betroffene Domains</small></article>
         <article class="stat-card high-card"><span class="stat-label">High</span><div><strong id="stat-high">0</strong><span class="stat-icon icon-high">↑</span></div><small id="stat-high-hosts">0 betroffene Domains</small></article>
+        <article class="stat-card medium-card"><span class="stat-label">Medium</span><div><strong id="stat-medium">0</strong><span class="stat-icon icon-medium">•</span></div><small id="stat-medium-hosts">0 betroffene Domains</small></article>
         <article class="stat-card"><span class="stat-label">Critical / High</span><div><strong id="stat-affected">0</strong><span class="stat-icon icon-affected">⌁</span></div><small>Domains mit Handlungsbedarf</small></article>
       </div>
 
@@ -57,12 +58,12 @@
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th scope="col">Domain / Host</th><th scope="col">IP-Adresse</th><th scope="col" class="severity-column">Critical</th><th scope="col" class="severity-column">High</th><th scope="col">Status</th><th scope="col"><span class="sr-only">Details</span></th></tr></thead>
+            <thead><tr><th scope="col">Domain / Host</th><th scope="col">IP-Adresse</th><th scope="col" class="severity-column">Critical</th><th scope="col" class="severity-column">High</th><th scope="col" class="severity-column">Medium</th><th scope="col">Status</th><th scope="col"><span class="sr-only">Details</span></th></tr></thead>
             <tbody id="results-body"></tbody>
           </table>
           <div id="empty-results" class="empty-results" hidden><span>⌕</span><strong>Keine passenden Domains</strong><small>Filter anpassen oder Suchbegriff prüfen.</small></div>
         </div>
-        <p class="table-footnote"><span class="footnote-dot"></span> Gezählt werden Nessus-Findings der Risikostufen Critical und High. Informative Plugins werden nicht als Schwachstellen gewertet.</p>
+        <p class="table-footnote"><span class="footnote-dot"></span> Critical und High werden priorisiert; Medium-Findings sind ebenfalls aufgeführt. Informative Plugins werden nicht als Schwachstellen gewertet.</p>
       </section>
     </section>
 
